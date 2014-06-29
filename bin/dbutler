@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+var optimist = require('optimist');
+var dbutler = require('./..');
+
+var argv = optimist
+    .usage('Usage: dbutler [options]')
+
+    .alias('g', 'git')
+    .describe('g', 'The url to your github repo')
+
+    .alias('t', 'tag')
+    .describe('t', 'The tag for the container')
+
+    .alias('d', 'docker')
+    .default('d', 'unix:///var/run/docker.sock')
+    .describe('d', 'Your docker connection')
+
+    .alias('b', 'branch')
+    .default('b', 'master')
+    .describe('b', 'The branch you want to deploy')
+
+
+    .alias('c', 'containers')
+    .default('c', 1)
+    .describe('c', 'How many containers you want to run')
+
+    .describe('dns', 'The DNS')
+
+    .describe('v', 'The volumes')
+    .alias('v', 'volumes')
+
+    .describe('env', 'The env vars')
+    .alias('e', 'env')
+    .demand(['g','t'])
+
+    .argv;
+
+
+// Howto Help
+if (argv.h || argv.help) {
+    optimist.showHelp();
+    process.exit(0);
+}
+
+// Test e vars
+argv.env = (argv.env && typeof argv.env === 'string' ? [argv.env] : argv.env);
+dbutler(argv, function (err, result) {
+    if(err) console.log('Err: ', err);
+    process.exit(0);
+});

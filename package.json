@@ -1,0 +1,31 @@
+{
+  "name": "docker-butler",
+  "version": "0.0.1",
+  "description": "docker-butler ==============",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/steffenmllr/docker-butler.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bin": {
+    "nwbuild": "./bin/dbutler"
+  },
+  "bugs": {
+    "url": "https://github.com/steffenmllr/docker-butler/issues"
+  },
+  "homepage": "https://github.com/steffenmllr/docker-butler",
+  "dependencies": {
+    "async": "^0.9.0",
+    "dockops": "^0.2.1",
+    "lodash": "^2.4.1",
+    "optimist": "^0.6.1",
+    "rimraf": "^2.2.8",
+    "tar-fs": "^0.3.3",
+    "tmp": "0.0.23"
+  }
+}
