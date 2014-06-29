@@ -1,7 +1,7 @@
 docker-butler
 ==============
 
-    Create a new docker container from a git url, builds the container, looks up old container names, runs `n` containers and stops the old containers and cleans up stopped containers
+> Create a new docker container from a git url, builds the container, looks up old container names, runs `n` containers and stops the old containers and cleans up stopped containers
 
 ##### Install
 `npm i steffenmllr/docker-butler -g`
