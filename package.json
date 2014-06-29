@@ -13,7 +13,7 @@
   "author": "",
   "license": "MIT",
   "bin": {
-    "nwbuild": "./bin/dbutler"
+    "dbutler": "./bin/dbutler"
   },
   "bugs": {
     "url": "https://github.com/steffenmllr/docker-butler/issues"
