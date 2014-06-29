@@ -1,7 +1,7 @@
-docker-buttler
+docker-butler
 ==============
 
-Create a new docker container from a git url, runs them, looks up old container names and stops them and restarts with the new image
+    Create a new docker container from a git url, builds the container, looks up old container names, runs `n` containers and stops the old containers and cleans up stopped containers
 
 ##### Install
 `npm i steffenmllr/docker-butler -g`
@@ -20,6 +20,7 @@ Options:
   -c, --containers  How many containers you want to run  [default: 1]
   --dns             The DNS
   -v, --volumes     The volumes
+  --clean           Clean up old stopped containers      [default: false]
   --env             The env vars
 ```
 

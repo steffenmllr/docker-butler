@@ -6,6 +6,8 @@ var rimraf = require('rimraf');
 var async = require('async');
 var _ = require('lodash');
 
+tmp.setGracefulCleanup();
+
 module.exports = function (config, done) {
     var docker = dockops.createDocker(config.docker);
     var images = new dockops.Images(docker);
@@ -28,7 +30,12 @@ module.exports = function (config, done) {
         function (path, callback) {
             // Find running Images
             containers.listRunning(function (err, running) {
-                var ids = _.pluck(_.where(running, {'Image': config.tag + ':latest'}), 'Id');
+                var ids = _.compact(_.map(running, function(container) {
+                    if(container.Image === config.tag + ':latest' && container.Status.indexOf('Up') !== -1) {
+                        return container.Id;
+                    }
+                    return false;
+                }));
                 callback(err, path, ids);
             });
         },
@@ -40,49 +47,53 @@ module.exports = function (config, done) {
         }, function (path, ids, callback) {
             // Tar and build the image
             images.buildStream(tar.pack(path), config.tag, function (err) {
-                callback(err, ids);
+                rimraf(path, function () {
+                    callback(err, ids);
+                });
             });
         },
         function (runningContainers, callback) {
             console.log('runningContainers', runningContainers);
 
-            // Start the new Containers
-            async.each(_.range(0,config.containers), function (times, done) {
-
+            async.times(config.containers, function(n, done){
                 containers.run({
                     create: { Image: config.tag, Env: config.env, Dns: config.dns, Volumes: config.volumes }
-                }, function (err, result) {
-                    console.log('CREATED: ', err, result);
-                    done(err, result);
+                }, function(err, container) {
+                    done(err, (container||{}).id);
                 });
-
-            }, function (err, logs) {
-                if(!err) console.log('Started ' + config.containers + ' Containers');
-                callback(err, runningContainers);
+            }, function(err, newContainers) {
+                callback(err, runningContainers, newContainers);
             });
         },
-        function (ids, callback) {
-            ids = ids || [];
-            if(ids.length > 0) {
-                console.log('Stopping: ', ids.length + ' old Containers');
+        function (runningContainers, newContainers, callback) {
+            runningContainers = runningContainers || [];
+            if(runningContainers.length > 0) {
+                console.log('Stopping: ', runningContainers.length + ' old Containers');
                 // Stop Running Images
-                async.each(ids, function (id, done) {
+                async.each(runningContainers, function (id, done) {
                     containers.stop(id, done);
-                }, callback);
+                }, function (err) {
+                    callback(err, newContainers);
+                });
             } else {
-                callback();
+                callback(null, newContainers);
             }
         },
-        function (callback) {
+        function (newContainers, callback) {
             // Cleanup all Stopped containers
-            containers.listStopped(callback);
+            containers.listStopped(function (err, stoppedContainers) {
+                callback(err, stoppedContainers, newContainers);
+            });
         },
-        function (stopped, callback) {
-            if(stopped.length > 0) {
-                containers.removeStopped(callback);
+        function (stoppedContainers, newContainers, callback) {
+            if(stoppedContainers.length > 0 && config.clean) {
+                containers.removeStopped(function (err) {
+                    callback(err, newContainers);
+                });
             } else {
-                callback(false);
+                callback(null, newContainers);
             }
+
         }
     ], done);
 

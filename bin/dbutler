@@ -19,6 +19,8 @@ var argv = optimist
     .default('b', 'master')
     .describe('b', 'The branch you want to deploy')
 
+    // .alias('p', 'port')
+    // .describe('p', 'Ports eg. 80:2368 or 80 (container:host)')
 
     .alias('c', 'containers')
     .default('c', 1)
@@ -28,6 +30,10 @@ var argv = optimist
 
     .describe('v', 'The volumes')
     .alias('v', 'volumes')
+
+    .describe('clean', 'Clean up old stopped containers')
+    .boolean('clean')
+    .default('clean', false)
 
     .describe('env', 'The env vars')
     .alias('e', 'env')
@@ -44,7 +50,8 @@ if (argv.h || argv.help) {
 
 // Test e vars
 argv.env = (argv.env && typeof argv.env === 'string' ? [argv.env] : argv.env);
-dbutler(argv, function (err, result) {
+dbutler(argv, function (err, containers) {
     if(err) console.log('Err: ', err);
+    console.log('Created containers: ', containers);
     process.exit(0);
 });
