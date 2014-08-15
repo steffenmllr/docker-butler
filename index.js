@@ -57,7 +57,7 @@ module.exports = function (config, done) {
 
             async.times(config.containers, function(n, done){
                 containers.run({
-                    create: { Image: config.tag, Env: config.env, Dns: config.dns, Volumes: config.volumes }
+                    create: { Image: config.tag, Env: config.env, Dns: [config.dns], Volumes: config.volumes }
                 }, function(err, container) {
                     done(err, (container||{}).id);
                 });
