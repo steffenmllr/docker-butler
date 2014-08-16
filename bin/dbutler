@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-var optimist = require('optimist');
-var dbutler = require('./..');
+var dockerButler   = require('./..');
 
-var argv = optimist
+var argv = require('yargs')
     .usage('Usage: dbutler [options]')
 
     .alias('g', 'git')
@@ -11,47 +10,50 @@ var argv = optimist
     .alias('t', 'tag')
     .describe('t', 'The tag for the container')
 
-    .alias('d', 'docker')
-    .default('d', 'unix:///var/run/docker.sock')
-    .describe('d', 'Your docker connection')
+    .alias('s', 'socket')
+    .default('s', 'unix:///var/run/docker.sock')
+    .describe('socket', 'Your socket docker connection, eg unix:///var/run/docker.sock')
+
+    .alias('h', 'host')
+    .describe('h', 'Your docker host: eg. http://192.168.42.43:2375')
 
     .alias('b', 'branch')
     .default('b', 'master')
     .describe('b', 'The branch you want to deploy')
 
-    // .alias('p', 'port')
-    // .describe('p', 'Ports eg. 80:2368 or 80 (container:host)')
+    // .alias('c', 'containers')
+    // .default('c', 1)
+    // .describe('c', 'How many containers you want to run')
 
-    .alias('c', 'containers')
-    .default('c', 1)
-    .describe('c', 'How many containers you want to run')
+    .describe('dns', 'The DNS, eg. 8.8.8.8')
 
-    .describe('dns', 'The DNS')
-
-    .describe('v', 'The volumes')
+    .describe('v', 'The volume eg /some/host_folder:/some/container_folder (host:container)')
     .alias('v', 'volumes')
 
     .describe('clean', 'Clean up old stopped containers')
     .boolean('clean')
-    .default('clean', false)
+    .default('clean', true)
 
     .describe('env', 'The env vars')
     .alias('e', 'env')
-    .demand(['g','t'])
 
+    .demand(['g', 't'])
     .argv;
 
 
 // Howto Help
-if (argv.h || argv.help) {
-    optimist.showHelp();
+if (argv.help) {
+    require('yargs').showHelp();
     process.exit(0);
 }
 
-// Test e vars
-argv.env = (argv.env && typeof argv.env === 'string' ? [argv.env] : argv.env);
-dbutler(argv, function (err, containers) {
-    if(err) console.log('Err: ', err);
-    console.log('Created containers: ', containers);
+var butler = new dockerButler(argv);
+
+butler.serve().then(function (containers) {
+    console.log('Created containers:', (containers.started.length !== 0 ? containers.started.join(', ') : '0'));
+    console.log('Stopped old containers: ', (containers.stopped.length !== 0 ? containers.stopped.join(', ') : '0'));
     process.exit(0);
+}).catch(function (err) {
+    console.log('Error: ', err);
+    process.exit(1);
 });
