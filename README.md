@@ -19,7 +19,7 @@ Options:
   --dns          The DNS, eg. 8.8.8.8
   -v, --volumes  The volume eg /some/host_folder:/some/container_folder (host:container)
   --clean        Clean up old stopped containers                                          [default: true]
-  -s, --socket                                                                            [default: "unix:///var/run/docker.sock"]
+  -s, --socket                                                                            [default: "/var/run/docker.sock"]
 ```
 
 

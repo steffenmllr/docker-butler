@@ -11,8 +11,8 @@ var argv = require('yargs')
     .describe('t', 'The tag for the container')
 
     .alias('s', 'socket')
-    .default('s', 'unix:///var/run/docker.sock')
-    .describe('socket', 'Your socket docker connection, eg unix:///var/run/docker.sock')
+    .default('s', '/var/run/docker.sock')
+    .describe('socket', 'Your socket docker connection, eg /var/run/docker.sock')
 
     .alias('h', 'host')
     .describe('h', 'Your docker host: eg. http://192.168.42.43:2375')
