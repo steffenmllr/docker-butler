@@ -47,13 +47,8 @@ if (argv.help) {
     process.exit(0);
 }
 
-var butler = new dockerButler(argv);
-
-butler.serve().then(function (containers) {
-    console.log('Created containers:', (containers.started.length !== 0 ? containers.started.join(', ') : '0'));
-    console.log('Stopped old containers: ', (containers.stopped.length !== 0 ? containers.stopped.join(', ') : '0'));
+dockerButler(argv).then(function () {
     process.exit(0);
-}).catch(function (err) {
-    console.log('Error: ', err);
+}).catch(function () {
     process.exit(1);
 });

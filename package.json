@@ -1,11 +1,8 @@
 {
   "name": "docker-butler",
-  "version": "1.1.0",
-  "description": "docker-butler ==============",
+  "version": "2.0.0",
+  "description": "Create a new docker container from a git url, builds the container, looks up old container names, runs the container, stops the old containers and cleans up stopped containers",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/steffenmllr/docker-butler.git"
@@ -20,17 +17,14 @@
   },
   "homepage": "https://github.com/steffenmllr/docker-butler",
   "dependencies": {
-    "bluebird": "^2.3.0",
-    "chalk": "^0.5.1",
-    "child-process-promise": "^0.2.0-SNAPSHOT.1389671754086",
-    "dockerode": "^2.0.2",
-    "lodash": "^2.4.1",
-    "rimraf": "^2.2.8",
-    "tar-fs": "^0.4.1",
-    "temp": "^0.8.1",
-    "yargs": "^1.3.1"
+    "bluebird": "^3.3.5",
+    "debug": "^2.2.0",
+    "dockerode": "^2.2.10",
+    "tar-fs": "^1.12.0",
+    "temp": "^0.8.3",
+    "tmp": "0.0.28"
   },
   "devDependencies": {
-    "tape": "^2.14.0"
+    "eslint": "^2.8.0"
   }
 }
