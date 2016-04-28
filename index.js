@@ -115,15 +115,43 @@ function builDockerImage(docker, tag, path) {
  * @param  {[type]} startOptions [description]
  * @return {[type]}              [description]
  */
-function runContainers (docker, tag, startOptions) {
+function runContainers (docker, tag, config) {
     return new Promise(function(resolve, reject) {
+        var startOptions = {};
+        if (config.env) {
+            startOptions.Env = (typeof config.env === 'string' ? [config.env] : config.env);
+        }
         docker.createContainer({Image: tag, Env: startOptions.Env}, function (err, container) {
             if (err) return reject(err);
-            container.start(function (err) {
+            // Set DNS
+            if (config.dns) {
+                startOptions.Dns = (typeof config.dns === 'string' ? [config.dns] : config.dns);
+            }
+
+            // Set Volumes
+            if (config.volumes) {
+                startOptions.Binds = (typeof config.volumes === 'string' ? [config.volumes] : config.volumes);
+            }
+
+            container.start(startOptions, function (err) {
                 if (err) return reject(err);
                 resolve(container.id);
             });
         });
+    });
+}
+
+function checkIfContainerIsRunning(docker, wait, containerId) {
+    wait = parseInt(wait, 10) || 1000;
+    return new Promise(function(resolve, reject) {
+        setTimeout(function () {
+            docker.getContainer(containerId).inspect(function (err, data) {
+                if(err || !data.State.Running) {
+                    return reject('Container exited: ' + containerId);
+                }
+                resolve(containerId);
+            });
+        }, wait);
     });
 }
 
@@ -149,6 +177,7 @@ function dockerButler(config) {
         created: cloneRepo(config.git, config.branch)
         .then(builDockerImage.bind(null, docker, config.tag))
         .then(runContainers.bind(null, docker, config.tag, config))
+        .then(checkIfContainerIsRunning.bind(null, docker, config.wait))
     }).then(function(result) {
         infoLog(result.created + ' started');
         if (result.running.length > 0) {

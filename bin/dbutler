@@ -34,6 +34,10 @@ var argv = require('yargs')
     .boolean('clean')
     .default('clean', true)
 
+    .describe('wait', 'Time to wait to check if the container is running')
+    .default('wait', 1000)
+
+
     .describe('env', 'The env vars')
     .alias('e', 'env')
 
