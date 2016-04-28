@@ -30,10 +30,6 @@ var argv = require('yargs')
     .describe('v', 'The volume eg /some/host_folder:/some/container_folder (host:container)')
     .alias('v', 'volumes')
 
-    .describe('clean', 'Clean up old stopped containers')
-    .boolean('clean')
-    .default('clean', true)
-
     .describe('wait', 'Time to wait to check if the container is running')
     .default('wait', 1000)
 
