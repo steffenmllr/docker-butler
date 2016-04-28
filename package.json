@@ -1,6 +1,6 @@
 {
   "name": "docker-butler",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Create a new docker container from a git url, builds the container, looks up old container names, runs the container, stops the old containers and cleans up stopped containers",
   "main": "index.js",
   "repository": {
@@ -22,7 +22,8 @@
     "dockerode": "^2.2.10",
     "tar-fs": "^1.12.0",
     "temp": "^0.8.3",
-    "tmp": "0.0.28"
+    "tmp": "0.0.28",
+    "yargs": "^4.6.0"
   },
   "devDependencies": {
     "eslint": "^2.8.0"
